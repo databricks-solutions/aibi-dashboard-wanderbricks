@@ -1,13 +1,14 @@
 # Wanderbricks AI/BI Dashboard
 
-A sample [Databricks AI/BI Dashboard](https://docs.databricks.com/en/dashboards/index.html) built on the `samples.wanderbricks` dataset, walkthrough in [this blog post](<insert link once posted>). The dataset is available in every Databricks workspace with no setup required.
+A sample [Databricks AI/BI Dashboard](https://docs.databricks.com/en/dashboards/index.html) built as a companion to [this blog post](<insert link once posted>) on making dashboards beautiful.
 
 ## Installation
+
+The dataset used for this dashboard, `samples.wanderbricks`, is available in every Databricks workspace — just grab the dashboard definition and you're good to go.
 
 1. Download `wanderbricks_dashboard.lvdash.json`
 2. In your Databricks workspace, go to **Dashboards**
 3. Click **Import** and upload the file
-
 The dashboard includes three pages built on Wanderbricks, a fictional travel property booking platform:
 
 - **Executive Overview** — KPIs (total bookings, revenue, avg nightly rate), booking status distribution, and property activity over time
