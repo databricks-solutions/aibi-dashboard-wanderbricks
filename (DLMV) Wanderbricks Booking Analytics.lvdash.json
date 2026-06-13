@@ -1,0 +1,3116 @@
+{
+  "datasets": [
+    {
+      "name": "wanderbricks_bookings",
+      "displayName": "Wanderbricks Bookings",
+      "config": {
+        "source": "samples.wanderbricks.bookings",
+        "measures": [
+          {
+            "name": "Total Revenue",
+            "expr": "SUM(total_amount)",
+            "comment": "Total booking revenue",
+            "format": {
+              "type": "currency",
+              "currencyCode": "USD",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 2.0
+              }
+            }
+          },
+          {
+            "name": "Booking Count",
+            "expr": "COUNT(booking_id)",
+            "comment": "Total number of bookings"
+          },
+          {
+            "name": "Avg Booking Value",
+            "expr": "MEASURE(`Total Revenue`) / MEASURE(`Booking Count`)",
+            "comment": "Average revenue per booking",
+            "format": {
+              "type": "currency",
+              "currencyCode": "USD",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 2.0
+              }
+            }
+          },
+          {
+            "name": "Avg Guests",
+            "expr": "AVG(guests_count)",
+            "comment": "Average number of guests per booking",
+            "format": {
+              "type": "number",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 1.0
+              }
+            }
+          },
+          {
+            "name": "Unique Properties Booked",
+            "expr": "COUNT(DISTINCT property_id)",
+            "comment": "Number of distinct properties booked"
+          },
+          {
+            "name": "Unique Destinations",
+            "expr": "COUNT(DISTINCT properties.destination_id)",
+            "comment": "Number of distinct destinations booked"
+          },
+          {
+            "name": "Cancelled Bookings",
+            "expr": "COUNT(booking_id) FILTER (WHERE status = 'cancelled')",
+            "comment": "Number of cancelled bookings"
+          },
+          {
+            "name": "Cancellation Rate",
+            "expr": "MEASURE(`Cancelled Bookings`) * 1.0 / MEASURE(`Booking Count`)",
+            "comment": "Percentage of bookings that were cancelled",
+            "format": {
+              "type": "percentage",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 1.0
+              }
+            }
+          },
+          {
+            "name": "Avg Nightly Rate",
+            "expr": "AVG(properties.base_price)",
+            "comment": "Average nightly rate across all bookings",
+            "format": {
+              "type": "currency",
+              "currencyCode": "USD",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 2.0
+              }
+            }
+          },
+          {
+            "name": "Total Hosts",
+            "expr": "COUNT(DISTINCT properties.host_id)",
+            "comment": "Total number of unique hosts"
+          },
+          {
+            "name": "Active Hosts",
+            "expr": "COUNT(DISTINCT CASE\n  WHEN properties.hosts.is_active THEN properties.host_id\nEND)",
+            "comment": "Number of active hosts"
+          },
+          {
+            "name": "Verified Hosts",
+            "expr": "COUNT(DISTINCT CASE\n  WHEN properties.hosts.is_verified THEN properties.host_id\nEND)",
+            "comment": "Number of verified hosts"
+          },
+          {
+            "name": "Pct Verified Hosts",
+            "expr": "MEASURE(`Verified Hosts`) * 1.0 / MEASURE(`Total Hosts`)",
+            "comment": "Percentage of hosts that are verified",
+            "format": {
+              "type": "percentage",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 1.0
+              }
+            }
+          },
+          {
+            "name": "Avg Host Rating",
+            "expr": "AVG(properties.hosts.rating)",
+            "comment": "Average host rating across bookings",
+            "format": {
+              "type": "number",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 2.0
+              }
+            }
+          },
+          {
+            "name": "Average Length of Stay",
+            "expr": "AVG(DATEDIFF(check_out, check_in))",
+            "comment": "Average number of nights per booking",
+            "format": {
+              "type": "number",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 1.0
+              }
+            }
+          },
+          {
+            "name": "Completed Bookings",
+            "expr": "COUNT(booking_id) FILTER (WHERE status = 'completed')",
+            "comment": "Number of completed bookings"
+          },
+          {
+            "name": "Booking Completion Pct",
+            "expr": "MEASURE(`Completed Bookings`) * 1.0 / MEASURE(`Booking Count`)",
+            "comment": "Percentage of bookings that were completed",
+            "format": {
+              "type": "percentage",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 1.0
+              }
+            }
+          }
+        ],
+        "version": "1.1",
+        "dimensions": [
+          {
+            "name": "Booking Status",
+            "expr": "status",
+            "comment": "Status of the booking (e.g., pending, confirmed, cancelled)"
+          },
+          {
+            "name": "Check In Date",
+            "expr": "check_in",
+            "comment": "Check-in date for the booking"
+          },
+          {
+            "name": "Check Out Date",
+            "expr": "check_out",
+            "comment": "Check-out date for the booking"
+          },
+          {
+            "name": "Check In Month",
+            "expr": "DATE_TRUNC('MONTH', check_in)",
+            "comment": "Month of check-in date"
+          },
+          {
+            "name": "Booking Created At",
+            "expr": "created_at",
+            "comment": "Date the booking was created"
+          },
+          {
+            "name": "Property Type",
+            "expr": "properties.property_type",
+            "comment": "Type of property (e.g., house, apartment)"
+          },
+          {
+            "name": "Property Title",
+            "expr": "properties.title",
+            "comment": "Title of the property listing"
+          },
+          {
+            "name": "Base Price",
+            "expr": "properties.base_price",
+            "comment": "Base price of the property per night",
+            "format": {
+              "type": "currency",
+              "currencyCode": "USD",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 2.0
+              }
+            }
+          },
+          {
+            "name": "Bedrooms",
+            "expr": "properties.bedrooms",
+            "comment": "Number of bedrooms in the property"
+          },
+          {
+            "name": "Destination",
+            "expr": "properties.destinations.destination",
+            "comment": "Name of the travel destination"
+          },
+          {
+            "name": "Country",
+            "expr": "properties.destinations.country",
+            "comment": "Country of the destination"
+          },
+          {
+            "name": "State or Province",
+            "expr": "properties.destinations.state_or_province",
+            "comment": "State or province of the destination"
+          },
+          {
+            "name": "Host Name",
+            "expr": "properties.hosts.name",
+            "comment": "Name of the property host"
+          },
+          {
+            "name": "Host Country",
+            "expr": "properties.hosts.country",
+            "comment": "Country of the host"
+          },
+          {
+            "name": "Host Rating",
+            "expr": "properties.hosts.rating",
+            "comment": "Host rating (1.0-5.0)"
+          },
+          {
+            "name": "Host Verified",
+            "expr": "properties.hosts.is_verified",
+            "comment": "Whether the host is verified"
+          },
+          {
+            "name": "Host Active",
+            "expr": "properties.hosts.is_active",
+            "comment": "Whether the host is active"
+          },
+          {
+            "name": "Property Latitude",
+            "expr": "properties.property_latitude",
+            "comment": "Latitude of the property location"
+          },
+          {
+            "name": "Property Longitude",
+            "expr": "properties.property_longitude",
+            "comment": "Longitude of the property location"
+          }
+        ],
+        "joins": [
+          {
+            "name": "properties",
+            "source": "samples.wanderbricks.properties",
+            "on": "source.property_id = properties.property_id",
+            "joins": [
+              {
+                "name": "destinations",
+                "source": "samples.wanderbricks.destinations",
+                "on": "properties.destination_id = destinations.destination_id"
+              },
+              {
+                "name": "hosts",
+                "source": "samples.wanderbricks.hosts",
+                "on": "properties.host_id = hosts.host_id"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "engagement_forecast",
+      "displayName": "Wanderbricks Forecast",
+      "queryLines": [
+        "SELECT\n",
+        "  *\n",
+        "FROM\n",
+        "  VALUES\n",
+        "    (TIMESTAMP '2026-03-29', 2550000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-03-30', 2565000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-03-31', 2582000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-04-01', 2598000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-04-02', 2568000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-04-03', 2548000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-04-04', 2582000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-04-05', 2596000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-04-06', 2570000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-04-07', 2612000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-04-08', 2630000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-04-09', 2650000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-04-10', 2615000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-04-11', 2638000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-04-12', 2645000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-04-13', 2655000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-04-14', 2622000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-04-15', 2698000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-04-16', 2652000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-04-17', 2632000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-04-18', 2668000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-04-19', 2655000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-04-20', 2682000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-04-21', 2710000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-04-22', 2738000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-04-23', 2675000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-04-24', 2668000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-04-25', 2705000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-04-26', 2708000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-04-27', 2712000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-04-28', 2722000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-04-29', 2740000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-04-30', 2768000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-05-01', 2702000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-05-02', 2720000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-05-03', 2725000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-05-04', 2730000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-05-05', 2735000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-05-06', 2802000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-05-07', 2772000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-05-08', 2742000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-05-09', 2762000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-05-10', 2738000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-05-11', 2752000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-05-12', 2735000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-05-13', 2848000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-05-14', 2878000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-05-15', 2832000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-05-16', 2852000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-05-17', 2865000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-05-18', 2900000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-05-19', 2848000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-05-20', 2918000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-05-21', 2872000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-05-22', 2852000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-05-23', 2878000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-05-24', 2902000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-05-25', 2865000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-05-26', 2855000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-05-27', 2908000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-05-28', 2868000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-05-29', 2825000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-05-30', 2818000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-05-31', 2855000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-06-01', 2835000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-06-02', 2842000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-06-03', 2895000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-06-04', 2925000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-06-05', 2868000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-06-06', 2888000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-06-07', 2915000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-06-08', 2848000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-06-09', 2912000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-06-10', 2942000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-06-11', 2955000.0, NULL, NULL, NULL),\n",
+        "    (TIMESTAMP '2026-06-12', NULL, 2945000.0, 3102000.0, 2788000.0),\n",
+        "    (TIMESTAMP '2026-06-13', NULL, 2970000.0, 3130000.0, 2810000.0),\n",
+        "    (TIMESTAMP '2026-06-14', NULL, 2935000.0, 3100000.0, 2770000.0),\n",
+        "    (TIMESTAMP '2026-06-15', NULL, 2978000.0, 3150000.0, 2806000.0),\n",
+        "    (TIMESTAMP '2026-06-16', NULL, 2945000.0, 3125000.0, 2765000.0),\n",
+        "    (TIMESTAMP '2026-06-17', NULL, 2988000.0, 3175000.0, 2801000.0),\n",
+        "    (TIMESTAMP '2026-06-18', NULL, 2950000.0, 3145000.0, 2755000.0),\n",
+        "    (TIMESTAMP '2026-06-19', NULL, 2995000.0, 3198000.0, 2792000.0),\n",
+        "    (TIMESTAMP '2026-06-20', NULL, 2958000.0, 3165000.0, 2751000.0),\n",
+        "    (TIMESTAMP '2026-06-21', NULL, 3005000.0, 3220000.0, 2790000.0) AS t(\n",
+        "    Date, Price, Price_forecast, Price_forecast_upper, Price_forecast_lower\n",
+        "  )"
+      ]
+    },
+    {
+      "name": "wanderbricks_map",
+      "displayName": "Wanderbricks Map",
+      "queryLines": [
+        "WITH properties AS (\n",
+        "  SELECT\n",
+        "    *\n",
+        "  FROM\n",
+        "    VALUES\n",
+        "      ('Boutique Hotel', 45.464, 9.190, 'Duomo Grand Hotel', 'Marco Bianchi', 'Lakes', 12),\n",
+        "      ('Boutique Hotel', 45.470, 9.185, 'Brera Design Hotel', 'Sofia Rossi', 'Lakes', 9),\n",
+        "      ('Boutique Hotel', 45.462, 9.175, 'Navigli Boutique', 'Luca Conti', 'Lakes', 7),\n",
+        "      ('Boutique Hotel', 45.478, 9.170, 'Porta Nuova Hotel', 'Anna Moretti', 'Lakes', 11),\n",
+        "      ('Boutique Hotel', 45.458, 9.200, 'Porta Romana Inn', 'Giuseppe Ferro', 'Lakes', 6),\n",
+        "      ('Boutique Hotel', 45.480, 9.205, 'Stazione Centrale Hotel', 'Elena Martini', 'Lakes', 10),\n",
+        "      ('Boutique Hotel', 45.472, 9.160, 'Sempione Park Hotel', 'Davide Galli', 'Lakes', 8),\n",
+        "      ('Boutique Hotel', 45.450, 9.180, 'Tortona Art Hotel', 'Chiara Neri', 'Lakes', 5),\n",
+        "      ('Boutique Hotel', 45.485, 9.195, 'Isola District Hotel', 'Roberto Fontana', 'Lakes', 7),\n",
+        "      ('Boutique Hotel', 45.466, 9.210, 'Corso Buenos Aires Inn', 'Marta Ricci', 'Lakes', 9),\n",
+        "      ('Boutique Hotel', 45.455, 9.165, 'San Lorenzo Hotel', 'Paolo Verdi', 'Lakes', 4),\n",
+        "      ('Boutique Hotel', 45.476, 9.215, 'Lambrate Design Hotel', 'Giulia Esposito', 'Lakes', 6),\n",
+        "      ('Boutique Hotel', 45.468, 9.198, 'Quadrilatero Hotel', 'Renato Ricci', 'Lakes', 14),\n",
+        "      ('Boutique Hotel', 45.474, 9.178, 'Castello Sforzesco Inn', 'Teresa Amato', 'Lakes', 8),\n",
+        "      ('Boutique Hotel', 45.460, 9.188, 'Sant Ambrogio Hotel', 'Vincenzo Parisi', 'Lakes', 10),\n",
+        "      ('Boutique Hotel', 45.482, 9.172, 'Chinatown Boutique', 'Mei Lin Rossi', 'Lakes', 5),\n",
+        "      ('Entire home', 45.468, 9.178, 'Brera Loft Apartment', 'Francesca Vitale', 'Lakes', 5),\n",
+        "      ('Entire home', 45.460, 9.192, 'Duomo View Penthouse', 'Alessandro Bruno', 'Lakes', 8),\n",
+        "      ('Entire home', 45.456, 9.170, 'Navigli Canal House', 'Valentina Rizzo', 'Lakes', 6),\n",
+        "      ('Entire home', 45.474, 9.188, 'Garibaldi Modern Flat', 'Matteo Colombo', 'Lakes', 4),\n",
+        "      ('Entire home', 45.482, 9.198, 'Central Station Loft', 'Laura Costa', 'Lakes', 3),\n",
+        "      ('Entire home', 45.448, 9.185, 'Porta Genova Home', 'Andrea Ferrara', 'Lakes', 7),\n",
+        "      ('Entire home', 45.465, 9.155, 'City Life Penthouse', 'Silvia Marchetti', 'Lakes', 10),\n",
+        "      ('Entire home', 45.452, 9.195, 'Romana Garden Flat', 'Federico Gallo', 'Lakes', 5),\n",
+        "      ('Entire home', 45.471, 9.202, 'Repubblica Apartment', 'Claudia Santoro', 'Lakes', 4),\n",
+        "      ('Entire home', 45.488, 9.182, 'Niguarda Family Home', 'Lorenzo Mancini', 'Lakes', 2),\n",
+        "      ('Entire home', 45.445, 9.175, 'Barona Artist Loft', 'Beatrice Parisi', 'Lakes', 6),\n",
+        "      ('Entire home', 45.469, 9.220, 'Citta Studi Flat', 'Simone Leone', 'Lakes', 3),\n",
+        "      ('Entire home', 45.477, 9.165, 'Arco della Pace Home', 'Camilla Fabbri', 'Lakes', 7),\n",
+        "      ('Entire home', 45.454, 9.158, 'Solari District Flat', 'Dario Montini', 'Lakes', 4),\n",
+        "      ('Entire home', 45.486, 9.210, 'Turro Terrace Home', 'Paola Serra', 'Lakes', 5),\n",
+        "      ('Entire home', 45.462, 9.205, 'Dateo Luxury Flat', 'Carla Fontana', 'Lakes', 9),\n",
+        "      ('Entire home', 45.449, 9.192, 'Vigentino Modern Home', 'Sergio Mazza', 'Lakes', 3),\n",
+        "      ('Entire home', 45.473, 9.212, 'Loreto View Apartment', 'Ilaria Bernardi', 'Lakes', 6),\n",
+        "      ('Private room', 45.463, 9.183, 'Missori Cozy Room', 'Giorgia Rinaldi', 'Lakes', 2),\n",
+        "      ('Private room', 45.475, 9.193, 'Moscova Private Suite', 'Nicola Ferretti', 'Lakes', 3),\n",
+        "      ('Private room', 45.459, 9.168, 'Ticinese Room', 'Elisa Barbieri', 'Lakes', 4),\n",
+        "      ('Private room', 45.483, 9.178, 'Maciachini Room', 'Stefano De Luca', 'Lakes', 1),\n",
+        "      ('Private room', 45.467, 9.208, 'Lima District Room', 'Arianna Sartori', 'Lakes', 5),\n",
+        "      ('Private room', 45.453, 9.190, 'Crocetta Private Room', 'Tommaso Greco', 'Lakes', 2),\n",
+        "      ('Private room', 45.477, 9.165, 'Arco della Pace Room', 'Camilla Fabbri', 'Lakes', 3),\n",
+        "      ('Private room', 45.446, 9.200, 'Corvetto Room', 'Gabriele Rizzo', 'Lakes', 1),\n",
+        "      ('Private room', 45.490, 9.190, 'Bicocca Student Room', 'Martina Caruso', 'Lakes', 4),\n",
+        "      ('Private room', 45.461, 9.150, 'Baggio Quiet Room', 'Emanuele Villa', 'Lakes', 2),\n",
+        "      ('Private room', 45.473, 9.225, 'Lambrate Studio Room', 'Serena Bassi', 'Lakes', 3),\n",
+        "      ('Private room', 45.457, 9.205, 'Lodi Private Suite', 'Alessio Testa', 'Lakes', 1),\n",
+        "      ('Private room', 45.479, 9.200, 'Centrale Cozy Room', 'Federica Moro', 'Lakes', 5),\n",
+        "      ('Private room', 45.455, 9.178, 'Colonne Room', 'Giacomo Piras', 'Lakes', 2),\n",
+        "      ('Private room', 45.487, 9.168, 'Affori Private Room', 'Roberta Longo', 'Lakes', 3),\n",
+        "      ('Private room', 45.444, 9.188, 'Famagosta Room', 'Antonio Ferretti', 'Lakes', 1),\n",
+        "      ('Cabin', 45.490, 9.155, 'Parco Nord Cabin', 'Isabella Monti', 'Lakes', 3),\n",
+        "      ('Cabin', 45.440, 9.160, 'Boscoincittà Cabin', 'Pietro Ferraro', 'Lakes', 5),\n",
+        "      ('Cabin', 45.495, 9.175, 'Sesto Green Cabin', 'Margherita Sala', 'Lakes', 4),\n",
+        "      ('Cabin', 45.435, 9.190, 'Chiaravalle Cabin', 'Riccardo Colombo', 'Lakes', 6),\n",
+        "      ('Cabin', 45.442, 9.145, 'Trenno Park Cabin', 'Lucia Morandi', 'Lakes', 2),\n",
+        "      ('Cabin', 45.500, 9.200, 'Monza Edge Cabin', 'Enrico Pozzi', 'Lakes', 7),\n",
+        "      ('Cabin', 45.438, 9.210, 'Rogoredo Park Cabin', 'Viola Marchetti', 'Lakes', 3),\n",
+        "      ('Cabin', 45.492, 9.220, 'Crescenzago Cabin', 'Filippo Damiani', 'Lakes', 4),\n",
+        "      ('Cabin', 45.445, 9.140, 'Settimo Milanese Cabin', 'Sara Benedetti', 'Lakes', 2),\n",
+        "      ('Cabin', 45.498, 9.160, 'Bruzzano Wood Cabin', 'Giovanni Martinelli', 'Lakes', 5),\n",
+        "      ('Cabin', 45.436, 9.175, 'Gratosoglio Cabin', 'Monica Longo', 'Lakes', 3),\n",
+        "      ('Cabin', 45.502, 9.185, 'Bresso Garden Cabin', 'Daniele Vitali', 'Lakes', 4),\n",
+        "      ('Cabin', 45.447, 9.205, 'Porto di Mare Cabin', 'Alessandra Costa', 'Lakes', 6),\n",
+        "      ('Cabin', 45.494, 9.145, 'Rho Fairgrounds Cabin', 'Mattia Pellegrini', 'Lakes', 3),\n",
+        "      ('Cabin', 45.504, 9.195, 'Cinisello Park Cabin', 'Eleonora Gatti', 'Lakes', 5),\n",
+        "      ('Boutique Hotel', 45.443, 9.198, 'Vigentino Heritage Hotel', 'Carlo Amato', 'Lakes', 8) AS t(\n",
+        "      property_type, latitude, longitude, property_name, host_name, region, bookings\n",
+        "    )\n",
+        ")\n",
+        "SELECT\n",
+        "  property_type,\n",
+        "  CAST(latitude AS DOUBLE) AS latitude,\n",
+        "  CAST(longitude AS DOUBLE) AS longitude,\n",
+        "  property_name,\n",
+        "  host_name,\n",
+        "  region\n",
+        "FROM\n",
+        "  properties\n",
+        "  LATERAL VIEW EXPLODE(SEQUENCE(1, bookings)) t AS n"
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "name": "86607160",
+      "displayName": "Executive view",
+      "layout": [
+        {
+          "widget": {
+            "name": "bac90889",
+            "multilineTextboxSpec": {
+              "lines": [
+                "## <span style=\"font-size:28px\">**Executive Overview**</span>\n",
+                "\n",
+                "<span style=\"font-size: 16px;\">A real-time view of booking performance, revenue trends, and property activity across your portfolio. Designed to help operations and revenue teams spot shifts in demand and act quickly.</span>"
+              ]
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#EBEBEB",
+                "dark": "#1E343F"
+              },
+              "widgetBorderColor": {
+                "light": "#EBEBEB",
+                "dark": "#1E343F"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 8,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "c6a301a4",
+            "queries": [
+              {
+                "name": "dashboards/01f148c828d814b58fa444568c648560/datasets/01f148c87827151b982c6c6d4083b55e_Booking Status",
+                "query": {
+                  "datasetName": "wanderbricks_bookings",
+                  "fields": [
+                    {
+                      "name": "Booking Status",
+                      "expression": "`Booking Status`"
+                    },
+                    {
+                      "name": "Booking Status_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Status"
+              },
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "Booking Status",
+                    "queryName": "dashboards/01f148c828d814b58fa444568c648560/datasets/01f148c87827151b982c6c6d4083b55e_Booking Status"
+                  }
+                ]
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#EBEBEB",
+                "dark": "#1E343F"
+              },
+              "widgetBorderColor": {
+                "light": "#EBEBEB",
+                "dark": "#1E343F"
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 0,
+            "width": 4,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "7f42cf0b",
+            "queries": [
+              {
+                "name": "dashboards/01f148c828d814b58fa444568c648560/datasets/01f148c87827151b982c6c6d4083b55e_Property Type",
+                "query": {
+                  "datasetName": "wanderbricks_bookings",
+                  "fields": [
+                    {
+                      "name": "Property Type",
+                      "expression": "`Property Type`"
+                    },
+                    {
+                      "name": "Property Type_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Type"
+              },
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "Property Type",
+                    "queryName": "dashboards/01f148c828d814b58fa444568c648560/datasets/01f148c87827151b982c6c6d4083b55e_Property Type"
+                  }
+                ]
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#EBEBEB",
+                "dark": "#1E343F"
+              },
+              "widgetBorderColor": {
+                "light": "#EBEBEB",
+                "dark": "#1E343F"
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 1,
+            "width": 4,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "d9af8be2",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "wanderbricks_bookings",
+                  "fields": [
+                    {
+                      "name": "yearly(Check In Date)",
+                      "expression": "DATE_TRUNC(\"YEAR\", `Check In Date`)"
+                    },
+                    {
+                      "name": "measure(Booking Count)",
+                      "expression": "MEASURE(`Booking Count`)"
+                    }
+                  ],
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "DESC",
+                      "expression": "DATE_TRUNC(\"YEAR\", `Check In Date`)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Total Bookings"
+              },
+              "style": {
+                "fontColor": {
+                  "light": "#FCFCFD"
+                }
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(Booking Count)",
+                  "style": {
+                    "bold": true,
+                    "rules": [
+                      {
+                        "condition": {
+                          "operator": ">="
+                        },
+                        "color": "#00A972",
+                        "bold": true
+                      }
+                    ]
+                  }
+                },
+                "target": {
+                  "fieldName": "measure(Booking Count)",
+                  "change": {
+                    "type": "percent"
+                  },
+                  "period": {
+                    "type": "relative-to-value-period",
+                    "offset": -1
+                  }
+                },
+                "period": {
+                  "fieldName": "yearly(Check In Date)"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#1E343F"
+              },
+              "widgetBorderColor": {
+                "light": "#1E343F"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 3,
+            "width": 4,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "0decc374",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "wanderbricks_bookings",
+                  "fields": [
+                    {
+                      "name": "yearly(Check In Date)",
+                      "expression": "DATE_TRUNC(\"YEAR\", `Check In Date`)"
+                    },
+                    {
+                      "name": "measure(Total Revenue)",
+                      "expression": "MEASURE(`Total Revenue`)"
+                    }
+                  ],
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "DESC",
+                      "expression": "DATE_TRUNC(\"YEAR\", `Check In Date`)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "format": {
+                "numberFormat": {
+                  "formatType": "numeral",
+                  "format": "$0,0"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Total Revenue"
+              },
+              "style": {
+                "fontColor": {
+                  "light": "#FCFCFD"
+                }
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(Total Revenue)",
+                  "format": {
+                    "type": "number-plain",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 2
+                    }
+                  },
+                  "style": {
+                    "bold": true,
+                    "rules": [
+                      {
+                        "condition": {
+                          "operator": ">="
+                        },
+                        "color": "#00A972",
+                        "bold": true
+                      }
+                    ]
+                  }
+                },
+                "target": {
+                  "fieldName": "measure(Total Revenue)",
+                  "period": {
+                    "type": "relative-to-value-period",
+                    "offset": -1
+                  },
+                  "change": {
+                    "type": "percent"
+                  },
+                  "format": {
+                    "type": "number-plain",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 2
+                    }
+                  }
+                },
+                "period": {
+                  "fieldName": "yearly(Check In Date)"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#1E343F"
+              },
+              "widgetBorderColor": {
+                "light": "#1E343F"
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 3,
+            "width": 4,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "5f2c9f5d",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "wanderbricks_bookings",
+                  "fields": [
+                    {
+                      "name": "yearly(Check In Date)",
+                      "expression": "DATE_TRUNC(\"YEAR\", `Check In Date`)"
+                    },
+                    {
+                      "name": "measure(Avg Nightly Rate)",
+                      "expression": "MEASURE(`Avg Nightly Rate`)"
+                    }
+                  ],
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "DESC",
+                      "expression": "DATE_TRUNC(\"YEAR\", `Check In Date`)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "format": {
+                "numberFormat": {
+                  "formatType": "numeral",
+                  "format": "$0,0"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Avg Nightly Rate"
+              },
+              "style": {
+                "fontColor": {
+                  "light": "#FCFCFD"
+                }
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(Avg Nightly Rate)",
+                  "style": {
+                    "bold": true,
+                    "rules": [
+                      {
+                        "condition": {
+                          "operator": ">="
+                        },
+                        "color": {
+                          "themeColorType": "visualizationColors",
+                          "position": 1
+                        },
+                        "bold": true
+                      }
+                    ]
+                  }
+                },
+                "target": {
+                  "fieldName": "measure(Avg Nightly Rate)",
+                  "period": {
+                    "type": "relative-to-value-period",
+                    "offset": -1
+                  },
+                  "change": {
+                    "type": "numeric"
+                  }
+                },
+                "period": {
+                  "fieldName": "yearly(Check In Date)"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#1E343F"
+              },
+              "widgetBorderColor": {
+                "light": "#1E343F"
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 3,
+            "width": 4,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "e345e93c",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "wanderbricks_bookings",
+                  "fields": [
+                    {
+                      "name": "measure(Booking Count)",
+                      "expression": "MEASURE(`Booking Count`)"
+                    },
+                    {
+                      "name": "Booking Status",
+                      "expression": "`Booking Status`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Booking Status Distribution"
+              },
+              "widgetType": "pie",
+              "encodings": {
+                "angle": {
+                  "fieldName": "measure(Booking Count)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "axis": {
+                    "hideTitle": true
+                  }
+                },
+                "color": {
+                  "fieldName": "Booking Status",
+                  "legend": {
+                    "position": "bottom",
+                    "hide": false,
+                    "hideTitle": false
+                  },
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "angle-reversed"
+                    }
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 12,
+            "width": 4,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "9ca33ca5",
+            "queries": [
+              {
+                "name": "dashboards/01f16307be67189494c76b073ed91468/datasets/01f16307be671941b8ff0f0c816afb27_Base Price",
+                "query": {
+                  "datasetName": "wanderbricks_bookings",
+                  "fields": [
+                    {
+                      "name": "min(Base Price)",
+                      "expression": "MIN(`Base Price`)"
+                    },
+                    {
+                      "name": "max(Base Price)",
+                      "expression": "MAX(`Base Price`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Base Prices      "
+              },
+              "widgetType": "range-slider",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "Base Price",
+                    "queryName": "dashboards/01f16307be67189494c76b073ed91468/datasets/01f16307be671941b8ff0f0c816afb27_Base Price"
+                  }
+                ]
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#EBEBEB",
+                "dark": "#1E343F"
+              },
+              "widgetBorderColor": {
+                "light": "#EBEBEB",
+                "dark": "#1E343F"
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 2,
+            "width": 4,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "57acb876",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "wanderbricks_bookings",
+                  "fields": [
+                    {
+                      "name": "Property Type",
+                      "expression": "`Property Type`"
+                    },
+                    {
+                      "name": "bin(Base Price, binWidth=10)",
+                      "expression": "BIN_FLOOR(`Base Price`, 10)"
+                    },
+                    {
+                      "name": "count(*)",
+                      "expression": "COUNT(`*`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Distribution of base prices by property types"
+              },
+              "widgetType": "histogram",
+              "encodings": {
+                "x": {
+                  "fieldName": "bin(Base Price, binWidth=10)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "fieldName": "count(*)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "Property Type",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 6,
+            "width": 4,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "0899dccb",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "wanderbricks_bookings",
+                  "fields": [
+                    {
+                      "name": "Property Type",
+                      "expression": "`Property Type`"
+                    },
+                    {
+                      "name": "count(*)",
+                      "expression": "COUNT(`*`)"
+                    },
+                    {
+                      "name": "Host Rating",
+                      "expression": "`Host Rating`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Distribution of host ratings"
+              },
+              "mark": {
+                "opacity": 0.78,
+                "shape": "diamond"
+              },
+              "widgetType": "scatter",
+              "encodings": {
+                "x": {
+                  "fieldName": "count(*)",
+                  "displayName": "Count",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "fieldName": "Host Rating",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "Property Type",
+                  "legend": {
+                    "position": "bottom"
+                  },
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 6,
+            "width": 8,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "49e7b5f4",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "wanderbricks_bookings",
+                  "fields": [
+                    {
+                      "name": "Property Type",
+                      "expression": "`Property Type`"
+                    },
+                    {
+                      "name": "weekly(Check In Date)",
+                      "expression": "DATE_TRUNC(\"WEEK\", `Check In Date`)"
+                    },
+                    {
+                      "name": "count(*)",
+                      "expression": "COUNT(`*`)"
+                    }
+                  ],
+                  "filters": [
+                    {
+                      "expression": "IN_RANGE(`Check In Date`, DATE'2023-06-07T00:00:00.000', DATE'2026-06-02T23:59:59.999')"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Property bookings over time"
+              },
+              "widgetType": "area",
+              "encodings": {
+                "x": {
+                  "fieldName": "weekly(Check In Date)",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "count(*)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "Property Type",
+                  "legend": {
+                    "position": "bottom"
+                  },
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 12,
+            "width": 8,
+            "height": 6
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "402b870a",
+      "displayName": "Detailed Insights",
+      "layout": [
+        {
+          "widget": {
+            "name": "e31740c5",
+            "queries": [
+              {
+                "name": "dashboards/01f16620f902106381efe5e2c1e98578/datasets/01f16620f90210e59c15e3c9f1325f76_Destination",
+                "query": {
+                  "datasetName": "wanderbricks_bookings",
+                  "fields": [
+                    {
+                      "name": "Destination",
+                      "expression": "`Destination`"
+                    },
+                    {
+                      "name": "Destination_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "Destination",
+                "showTitle": true
+              },
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "Destination",
+                    "queryName": "dashboards/01f16620f902106381efe5e2c1e98578/datasets/01f16620f90210e59c15e3c9f1325f76_Destination"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 2,
+            "width": 3,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "a6815faf",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "wanderbricks_bookings",
+                  "fields": [
+                    {
+                      "name": "weekly(Check In Date)",
+                      "expression": "DATE_TRUNC(\"WEEK\", `Check In Date`)"
+                    },
+                    {
+                      "name": "measure(Average Length of Stay)",
+                      "expression": "MEASURE(`Average Length of Stay`)"
+                    }
+                  ],
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "DESC",
+                      "expression": "DATE_TRUNC(\"WEEK\", `Check In Date`)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "Avg Length of Stay",
+                "showTitle": true
+              },
+              "style": {
+                "fontColor": {
+                  "light": "#F5F5F5"
+                }
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(Average Length of Stay)",
+                  "format": {
+                    "type": "number-plain",
+                    "decimalPlaces": {
+                      "type": "exact",
+                      "places": 1
+                    },
+                    "abbreviation": "none"
+                  },
+                  "formatTemplate": "{{ @formatted }} nights",
+                  "style": {
+                    "fontSize": 24,
+                    "color": {
+                      "themeColorType": "visualizationColors",
+                      "position": 3
+                    },
+                    "bold": true
+                  },
+                  "displayName": "Nights"
+                },
+                "target": {
+                  "fieldName": "measure(Average Length of Stay)",
+                  "period": {
+                    "type": "relative-to-value-period",
+                    "offset": -1
+                  },
+                  "change": {
+                    "type": "percent"
+                  }
+                },
+                "period": {
+                  "fieldName": "weekly(Check In Date)"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#1F354B"
+              },
+              "widgetBorderColor": {
+                "light": "#1F354B"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 3,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "4d6eb3f2",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "wanderbricks_bookings",
+                  "fields": [
+                    {
+                      "name": "weekly(Check In Date)",
+                      "expression": "DATE_TRUNC(\"WEEK\", `Check In Date`)"
+                    },
+                    {
+                      "name": "measure(Avg Host Rating)",
+                      "expression": "MEASURE(`Avg Host Rating`)"
+                    }
+                  ],
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "DESC",
+                      "expression": "DATE_TRUNC(\"WEEK\", `Check In Date`)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "Avg Host Rating",
+                "showTitle": true
+              },
+              "style": {
+                "fontColor": {
+                  "light": "#FFFFFF"
+                }
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(Avg Host Rating)",
+                  "format": {
+                    "type": "number-plain",
+                    "decimalPlaces": {
+                      "type": "exact",
+                      "places": 2
+                    },
+                    "abbreviation": "none"
+                  },
+                  "style": {
+                    "color": {
+                      "themeColorType": "visualizationColors",
+                      "position": 4
+                    },
+                    "bold": true
+                  },
+                  "displayName": "Rating"
+                },
+                "target": {
+                  "fieldName": "measure(Avg Host Rating)",
+                  "period": {
+                    "type": "relative-to-value-period",
+                    "offset": -1
+                  },
+                  "change": {
+                    "type": "percent"
+                  }
+                },
+                "period": {
+                  "fieldName": "weekly(Check In Date)"
+                }
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#1F354B"
+              },
+              "widgetBorderColor": {
+                "light": "#1F354B"
+              }
+            }
+          },
+          "position": {
+            "x": 2,
+            "y": 3,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "0f49e645",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "wanderbricks_bookings",
+                  "fields": [
+                    {
+                      "name": "weekly(Check In Date)",
+                      "expression": "DATE_TRUNC(\"WEEK\", `Check In Date`)"
+                    },
+                    {
+                      "name": "measure(Pct Verified Hosts)",
+                      "expression": "MEASURE(`Pct Verified Hosts`)"
+                    }
+                  ],
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "DESC",
+                      "expression": "DATE_TRUNC(\"WEEK\", `Check In Date`)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "Verified Host %",
+                "showTitle": true
+              },
+              "style": {
+                "fontColor": {
+                  "light": "#FFFFFF"
+                }
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(Pct Verified Hosts)",
+                  "format": {
+                    "type": "number-percent",
+                    "decimalPlaces": {
+                      "type": "exact",
+                      "places": 1
+                    }
+                  },
+                  "style": {
+                    "bold": true,
+                    "color": {
+                      "themeColorType": "visualizationColors",
+                      "position": 3
+                    }
+                  },
+                  "displayName": "Verified %"
+                },
+                "target": {
+                  "fieldName": "measure(Pct Verified Hosts)",
+                  "period": {
+                    "type": "relative-to-value-period",
+                    "offset": -1
+                  },
+                  "change": {
+                    "type": "percent"
+                  }
+                },
+                "period": {
+                  "fieldName": "weekly(Check In Date)"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#1F354B"
+              },
+              "widgetBorderColor": {
+                "light": "#1F354B"
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 3,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "6a7b334d",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "engagement_forecast",
+                  "fields": [
+                    {
+                      "name": "daily(Date)",
+                      "expression": "DATE_TRUNC(\"DAY\", `Date`)"
+                    },
+                    {
+                      "name": "Price",
+                      "expression": "`Price`"
+                    },
+                    {
+                      "name": "Price_forecast",
+                      "expression": "`Price_forecast`"
+                    },
+                    {
+                      "name": "Price_forecast_upper",
+                      "expression": "`Price_forecast_upper`"
+                    },
+                    {
+                      "name": "Price_forecast_lower",
+                      "expression": "`Price_forecast_lower`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 1,
+              "frame": {
+                "title": "Engagement Forecast",
+                "showTitle": true
+              },
+              "widgetType": "forecast-line",
+              "encodings": {
+                "x": {
+                  "fieldName": "daily(Date)",
+                  "displayName": "Date",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "original": {
+                    "fieldName": "Price",
+                    "displayName": "Price"
+                  },
+                  "prediction": {
+                    "fieldName": "Price_forecast",
+                    "displayName": "Price Forecast"
+                  },
+                  "predictionLower": {
+                    "fieldName": "Price_forecast_lower",
+                    "displayName": "Price Forecast Lower"
+                  },
+                  "predictionUpper": {
+                    "fieldName": "Price_forecast_upper",
+                    "displayName": "Price Forecast Upper"
+                  },
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "axis": {
+                    "hideTitle": false,
+                    "title": "Price"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 10,
+            "width": 4,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "e48ab6f2",
+            "queries": [
+              {
+                "name": "dashboards/01f148c828d814b58fa444568c648560/datasets/01f148c87827151b982c6c6d4083b55e_Booking Status",
+                "query": {
+                  "datasetName": "wanderbricks_bookings",
+                  "fields": [
+                    {
+                      "name": "Booking Status",
+                      "expression": "`Booking Status`"
+                    },
+                    {
+                      "name": "Booking Status_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Status"
+              },
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "Booking Status",
+                    "queryName": "dashboards/01f148c828d814b58fa444568c648560/datasets/01f148c87827151b982c6c6d4083b55e_Booking Status"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 2,
+            "width": 3,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "53d331cc",
+            "queries": [
+              {
+                "name": "dashboards/01f148c828d814b58fa444568c648560/datasets/01f148c87827151b982c6c6d4083b55e_Booking Created At",
+                "query": {
+                  "datasetName": "wanderbricks_bookings",
+                  "fields": [
+                    {
+                      "name": "Booking Created At",
+                      "expression": "`Booking Created At`"
+                    },
+                    {
+                      "name": "Booking Created At_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Booking dates",
+                "showDescription": true,
+                "description": "UTC timestamps for bookings"
+              },
+              "widgetType": "filter-date-range-picker",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "Booking Created At",
+                    "queryName": "dashboards/01f148c828d814b58fa444568c648560/datasets/01f148c87827151b982c6c6d4083b55e_Booking Created At"
+                  }
+                ]
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#EBECEC",
+                "dark": "#1E343F"
+              },
+              "widgetBorderColor": {
+                "light": "#EBECEC",
+                "dark": "#1E343F"
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 0,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "10a5e258",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "wanderbricks_bookings",
+                  "fields": [
+                    {
+                      "name": "weekly(Check In Date)",
+                      "expression": "DATE_TRUNC(\"WEEK\", `Check In Date`)"
+                    },
+                    {
+                      "name": "measure(Avg Nightly Rate)",
+                      "expression": "MEASURE(`Avg Nightly Rate`)"
+                    }
+                  ],
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "DESC",
+                      "expression": "DATE_TRUNC(\"WEEK\", `Check In Date`)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Avg Nightly Rate"
+              },
+              "format": {
+                "numberFormat": {
+                  "formatType": "numeral",
+                  "format": "$0,0"
+                }
+              },
+              "style": {
+                "fontColor": {
+                  "light": "#FFFFFF"
+                }
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(Avg Nightly Rate)",
+                  "style": {
+                    "bold": true,
+                    "color": {
+                      "themeColorType": "visualizationColors",
+                      "position": 5
+                    }
+                  }
+                },
+                "target": {
+                  "fieldName": "measure(Avg Nightly Rate)",
+                  "period": {
+                    "type": "relative-to-value-period",
+                    "offset": -1
+                  },
+                  "change": {
+                    "type": "numeric"
+                  }
+                },
+                "period": {
+                  "fieldName": "weekly(Check In Date)"
+                }
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#1F354B"
+              },
+              "widgetBorderColor": {
+                "light": "#1F354B"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 3,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "23cf9e68",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "wanderbricks_bookings",
+                  "fields": [
+                    {
+                      "name": "weekly(Check In Date)",
+                      "expression": "DATE_TRUNC(\"WEEK\", `Check In Date`)"
+                    },
+                    {
+                      "name": "measure(Cancellation Rate)",
+                      "expression": "MEASURE(`Cancellation Rate`)"
+                    }
+                  ],
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "DESC",
+                      "expression": "DATE_TRUNC(\"WEEK\", `Check In Date`)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "style": {
+                "fontColor": {
+                  "light": "#FFFFFF"
+                }
+              },
+              "frame": {
+                "title": "Cancellation Rate",
+                "showTitle": true
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(Cancellation Rate)",
+                  "format": {
+                    "type": "number-percent",
+                    "decimalPlaces": {
+                      "type": "exact",
+                      "places": 1
+                    }
+                  },
+                  "style": {
+                    "bold": true,
+                    "color": {
+                      "themeColorType": "visualizationColors",
+                      "position": 3
+                    }
+                  },
+                  "displayName": "Cancellation %"
+                },
+                "target": {
+                  "fieldName": "measure(Cancellation Rate)",
+                  "period": {
+                    "type": "relative-to-value-period",
+                    "offset": -1
+                  },
+                  "change": {
+                    "type": "percent"
+                  }
+                },
+                "period": {
+                  "fieldName": "weekly(Check In Date)"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#1F354B"
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 3,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "ea89a81f",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "wanderbricks_bookings",
+                  "fields": [
+                    {
+                      "name": "weekly(Check In Date)",
+                      "expression": "DATE_TRUNC(\"WEEK\", `Check In Date`)"
+                    },
+                    {
+                      "name": "measure(Booking Completion Pct)",
+                      "expression": "MEASURE(`Booking Completion Pct`)"
+                    }
+                  ],
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "DESC",
+                      "expression": "DATE_TRUNC(\"WEEK\", `Check In Date`)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "Booking Completion %",
+                "showTitle": true
+              },
+              "style": {
+                "fontColor": {
+                  "light": "#FFFFFF"
+                }
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(Booking Completion Pct)",
+                  "format": {
+                    "type": "number-percent",
+                    "decimalPlaces": {
+                      "type": "exact",
+                      "places": 1
+                    }
+                  },
+                  "style": {
+                    "color": {
+                      "themeColorType": "visualizationColors",
+                      "position": 3
+                    },
+                    "bold": true
+                  },
+                  "displayName": "Completion %"
+                },
+                "target": {
+                  "fieldName": "measure(Booking Completion Pct)",
+                  "period": {
+                    "type": "relative-to-value-period",
+                    "offset": -1
+                  },
+                  "change": {
+                    "type": "percent"
+                  }
+                },
+                "period": {
+                  "fieldName": "weekly(Check In Date)"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#1F354B"
+              },
+              "widgetBorderColor": {
+                "light": "#1F354B"
+              }
+            }
+          },
+          "position": {
+            "x": 10,
+            "y": 3,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "653ff563",
+            "queries": [
+              {
+                "name": "dashboards/01f16620f902106381efe5e2c1e98578/datasets/01f16620f90210e59c15e3c9f1325f76_Property Type",
+                "query": {
+                  "datasetName": "wanderbricks_bookings",
+                  "fields": [
+                    {
+                      "name": "Property Type",
+                      "expression": "`Property Type`"
+                    },
+                    {
+                      "name": "Property Type_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Property Type"
+              },
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "Property Type",
+                    "queryName": "dashboards/01f16620f902106381efe5e2c1e98578/datasets/01f16620f90210e59c15e3c9f1325f76_Property Type"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 2,
+            "width": 3,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "e6543f37",
+            "queries": [
+              {
+                "name": "dashboards/01f16620f902106381efe5e2c1e98578/datasets/01f16620f90210e59c15e3c9f1325f76_Base Price",
+                "query": {
+                  "datasetName": "wanderbricks_bookings",
+                  "fields": [
+                    {
+                      "name": "min(Base Price)",
+                      "expression": "MIN(`Base Price`)"
+                    },
+                    {
+                      "name": "max(Base Price)",
+                      "expression": "MAX(`Base Price`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Price"
+              },
+              "widgetType": "range-slider",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "Base Price",
+                    "queryName": "dashboards/01f16620f902106381efe5e2c1e98578/datasets/01f16620f90210e59c15e3c9f1325f76_Base Price"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 2,
+            "width": 3,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "478ce42c",
+            "multilineTextboxSpec": {
+              "lines": [
+                "## <span style=\"font-size:24px\">**Insights breakdown**</span>\n",
+                "\n",
+                "Wanderbricks' booking trends dashboard gives teams a clear view of demand patterns across time, destinations, and property types. It covers everything from high-level KPIs and seasonal peaks to booking lead times and cancellation reasons. "
+              ]
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#EBECEC",
+                "dark": "#1E343F"
+              },
+              "widgetBorderColor": {
+                "light": "#EBECEC",
+                "dark": "#1E343F"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 9,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "2d49bc49",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "wanderbricks_bookings",
+                  "fields": [
+                    {
+                      "name": "Property Type",
+                      "expression": "`Property Type`"
+                    },
+                    {
+                      "name": "measure(Avg Nightly Rate)",
+                      "expression": "MEASURE(`Avg Nightly Rate`)"
+                    },
+                    {
+                      "name": "Host Rating",
+                      "expression": "`Host Rating`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Correlating host ratings to average nightly rate"
+              },
+              "mark": {
+                "opacity": 0.78,
+                "shape": "cross45"
+              },
+              "widgetType": "scatter",
+              "encodings": {
+                "x": {
+                  "fieldName": "measure(Avg Nightly Rate)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "fieldName": "Host Rating",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "Property Type",
+                  "legend": {
+                    "position": "bottom"
+                  },
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 5,
+            "width": 8,
+            "height": 8
+          }
+        },
+        {
+          "widget": {
+            "name": "41179de4",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "wanderbricks_bookings",
+                  "fields": [
+                    {
+                      "name": "Bedrooms",
+                      "expression": "`Bedrooms`"
+                    },
+                    {
+                      "name": "Property Type",
+                      "expression": "`Property Type`"
+                    },
+                    {
+                      "name": "avg(Base Price)",
+                      "expression": "AVG(`Base Price`)"
+                    }
+                  ],
+                  "cubeGroupingSets": {
+                    "sets": [
+                      {
+                        "fieldNames": [
+                          "Bedrooms"
+                        ]
+                      },
+                      {
+                        "fieldNames": [
+                          "Property Type"
+                        ]
+                      }
+                    ]
+                  },
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "ASC",
+                      "expression": "`Bedrooms`"
+                    },
+                    {
+                      "direction": "ASC",
+                      "expression": "`Property Type`"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Average base price across property types and bedrooms"
+              },
+              "widgetType": "pivot",
+              "encodings": {
+                "rows": [
+                  {
+                    "fieldName": "Bedrooms",
+                    "headerWidth": 120
+                  }
+                ],
+                "columns": [
+                  {
+                    "fieldName": "Property Type"
+                  }
+                ],
+                "cell": {
+                  "type": "multi-cell",
+                  "fields": [
+                    {
+                      "fieldName": "avg(Base Price)",
+                      "cellType": "text",
+                      "style": {
+                        "type": "basic",
+                        "backgroundColor": {
+                          "themeColorType": "visualizationColors",
+                          "position": 1
+                        },
+                        "rules": [
+                          {
+                            "condition": {
+                              "operand": {
+                                "type": "data-value",
+                                "value": "250"
+                              },
+                              "operator": ">="
+                            },
+                            "backgroundColor": {
+                              "themeColorType": "visualizationColors",
+                              "position": 3
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 13,
+            "width": 4,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "dd297c9f",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "wanderbricks_bookings",
+                  "fields": [
+                    {
+                      "name": "Property Type",
+                      "expression": "`Property Type`"
+                    },
+                    {
+                      "name": "bin(Host Rating, binWidth=0_25)",
+                      "expression": "BIN_FLOOR(`Host Rating`, 0.25)"
+                    },
+                    {
+                      "name": "count(*)",
+                      "expression": "COUNT(`*`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Distribution of host ratings"
+              },
+              "widgetType": "histogram",
+              "encodings": {
+                "x": {
+                  "fieldName": "bin(Host Rating, binWidth=0_25)",
+                  "scale": {
+                    "type": "quantitative",
+                    "domain": {
+                      "min": 0,
+                      "max": 5
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "count(*)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "Property Type",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 5,
+            "width": 4,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "map_draft",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "wanderbricks_map",
+                  "fields": [
+                    {
+                      "name": "property_type",
+                      "expression": "`property_type`"
+                    },
+                    {
+                      "name": "latitude",
+                      "expression": "`latitude`"
+                    },
+                    {
+                      "name": "longitude",
+                      "expression": "`longitude`"
+                    },
+                    {
+                      "name": "property_name",
+                      "expression": "`property_name`"
+                    },
+                    {
+                      "name": "host_name",
+                      "expression": "`host_name`"
+                    },
+                    {
+                      "name": "count(*)",
+                      "expression": "COUNT(`*`)"
+                    }
+                  ],
+                  "filters": [
+                    {
+                      "expression": "`region` IN ('Lakes')"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "mark": {
+                "opacity": 0.55,
+                "size": -0.7
+              },
+              "frame": {
+                "title": "Booking Map by Property Type",
+                "showTitle": true
+              },
+              "widgetType": "symbol-map",
+              "encodings": {
+                "coordinates": {
+                  "latitude": {
+                    "fieldName": "latitude",
+                    "displayName": "Latitude"
+                  },
+                  "longitude": {
+                    "fieldName": "longitude",
+                    "displayName": "Longitude"
+                  }
+                },
+                "color": {
+                  "fieldName": "property_type",
+                  "legend": {
+                    "position": "right"
+                  },
+                  "displayName": "Property Type",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "size": {
+                  "fieldName": "count(*)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "Count"
+                },
+                "extra": [
+                  {
+                    "fieldName": "property_name",
+                    "displayName": "Property Name"
+                  },
+                  {
+                    "fieldName": "property_type",
+                    "displayName": "Property Type"
+                  },
+                  {
+                    "fieldName": "host_name",
+                    "displayName": "Host Name"
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 13,
+            "width": 8,
+            "height": 5
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "483c6ba1",
+      "displayName": "Tables",
+      "layout": [
+        {
+          "widget": {
+            "name": "94dcbc02",
+            "multilineTextboxSpec": {
+              "lines": [
+                "## <span style=\"font-size:24px\">**Tables**</span>\n",
+                "\n",
+                "Tabular representations of wanderbricks data for detailed logs\n",
+                "<p>&nbsp;</p>\n"
+              ]
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#EBECEC"
+              },
+              "widgetBorderColor": {
+                "light": "#EBECEC"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "549741bb",
+            "queries": [
+              {
+                "name": "dashboards/01f15e3c986718bc942288a3cfc9e44c/datasets/01f15e3c9867194bab82e34f6f1c2355_Host Country",
+                "query": {
+                  "datasetName": "wanderbricks_bookings",
+                  "fields": [
+                    {
+                      "name": "Host Country",
+                      "expression": "`Host Country`"
+                    },
+                    {
+                      "name": "Host Country_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "Host Country",
+                "showTitle": true,
+                "showDescription": true,
+                "description": "List of countries where wanderbircks operates"
+              },
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "Host Country",
+                    "queryName": "dashboards/01f15e3c986718bc942288a3cfc9e44c/datasets/01f15e3c9867194bab82e34f6f1c2355_Host Country"
+                  }
+                ]
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#EBECEC"
+              },
+              "widgetBorderColor": {
+                "light": "#EBECEC"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 2,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "3c220245",
+            "queries": [
+              {
+                "name": "dashboards/01f15e3c986718bc942288a3cfc9e44c/datasets/01f15e3c9867194bab82e34f6f1c2355_Booking Status",
+                "query": {
+                  "datasetName": "wanderbricks_bookings",
+                  "fields": [
+                    {
+                      "name": "Booking Status",
+                      "expression": "`Booking Status`"
+                    },
+                    {
+                      "name": "Booking Status_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "Booking status",
+                "showTitle": true,
+                "showDescription": true,
+                "description": "The state of current booking"
+              },
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "Booking Status",
+                    "queryName": "dashboards/01f15e3c986718bc942288a3cfc9e44c/datasets/01f15e3c9867194bab82e34f6f1c2355_Booking Status"
+                  }
+                ]
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#EBECEC"
+              },
+              "widgetBorderColor": {
+                "light": "#EBECEC"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 4,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "e53b2ccb",
+            "queries": [
+              {
+                "name": "dashboards/01f15e3c986718bc942288a3cfc9e44c/datasets/01f15e3c9867194bab82e34f6f1c2355_Bedrooms",
+                "query": {
+                  "datasetName": "wanderbricks_bookings",
+                  "fields": [
+                    {
+                      "name": "min(Bedrooms)",
+                      "expression": "MIN(`Bedrooms`)"
+                    },
+                    {
+                      "name": "max(Bedrooms)",
+                      "expression": "MAX(`Bedrooms`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "Bedrooms",
+                "showTitle": true,
+                "showDescription": true,
+                "description": "Typically between 1 and 6"
+              },
+              "widgetType": "range-slider",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "Bedrooms",
+                    "queryName": "dashboards/01f15e3c986718bc942288a3cfc9e44c/datasets/01f15e3c9867194bab82e34f6f1c2355_Bedrooms"
+                  }
+                ]
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#EBECEC"
+              },
+              "widgetBorderColor": {
+                "light": "#EBECEC"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 10,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "e4deb1a2",
+            "queries": [
+              {
+                "name": "dashboards/01f15e3c986718bc942288a3cfc9e44c/datasets/01f15e3c9867194bab82e34f6f1c2355_Host Rating",
+                "query": {
+                  "datasetName": "wanderbricks_bookings",
+                  "fields": [
+                    {
+                      "name": "min(Host Rating)",
+                      "expression": "MIN(`Host Rating`)"
+                    },
+                    {
+                      "name": "max(Host Rating)",
+                      "expression": "MAX(`Host Rating`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "selection": {
+                "defaultSelection": {
+                  "operator": {
+                    "operator": "AND",
+                    "args": []
+                  }
+                }
+              },
+              "frame": {
+                "title": "Host rating",
+                "showTitle": true,
+                "showDescription": true,
+                "description": "Rated between 1 and 5"
+              },
+              "widgetType": "range-slider",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "Host Rating",
+                    "queryName": "dashboards/01f15e3c986718bc942288a3cfc9e44c/datasets/01f15e3c9867194bab82e34f6f1c2355_Host Rating"
+                  }
+                ]
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#EBECEC"
+              },
+              "widgetBorderColor": {
+                "light": "#EBECEC"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 8,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "7fb4c645",
+            "queries": [
+              {
+                "name": "dashboards/01f15e3c986718bc942288a3cfc9e44c/datasets/01f15e3c9867194bab82e34f6f1c2355_Check In Date",
+                "query": {
+                  "datasetName": "wanderbricks_bookings",
+                  "fields": [
+                    {
+                      "name": "Check In Date",
+                      "expression": "`Check In Date`"
+                    },
+                    {
+                      "name": "Check In Date_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "Check in date",
+                "showTitle": true,
+                "showDescription": true,
+                "description": "Use relative time filters"
+              },
+              "widgetType": "filter-date-range-picker",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "Check In Date",
+                    "queryName": "dashboards/01f15e3c986718bc942288a3cfc9e44c/datasets/01f15e3c9867194bab82e34f6f1c2355_Check In Date"
+                  }
+                ]
+              }
+            },
+            "specExtensions": {
+              "widgetBackgroundColor": {
+                "light": "#EBECEC"
+              },
+              "widgetBorderColor": {
+                "light": "#EBECEC"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 6,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "pivot-tabl",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "wanderbricks_bookings",
+                  "fields": [
+                    {
+                      "name": "Property Type",
+                      "expression": "`Property Type`"
+                    },
+                    {
+                      "name": "Bedrooms",
+                      "expression": "`Bedrooms`"
+                    },
+                    {
+                      "name": "avg(Base Price)",
+                      "expression": "AVG(`Base Price`)"
+                    },
+                    {
+                      "name": "avg(Host Rating)",
+                      "expression": "AVG(`Host Rating`)"
+                    }
+                  ],
+                  "cubeGroupingSets": {
+                    "sets": [
+                      {
+                        "fieldNames": [
+                          "Property Type"
+                        ]
+                      },
+                      {
+                        "fieldNames": [
+                          "Bedrooms"
+                        ]
+                      }
+                    ]
+                  },
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "ASC",
+                      "expression": "`Property Type`"
+                    },
+                    {
+                      "direction": "ASC",
+                      "expression": "`Bedrooms`"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Base price Historic place vs bedrooms"
+              },
+              "widgetType": "pivot",
+              "encodings": {
+                "rows": [
+                  {
+                    "fieldName": "Property Type"
+                  }
+                ],
+                "columns": [
+                  {
+                    "fieldName": "Bedrooms"
+                  }
+                ],
+                "cell": {
+                  "type": "multi-cell",
+                  "fields": [
+                    {
+                      "fieldName": "avg(Base Price)",
+                      "cellType": "text",
+                      "style": {
+                        "type": "color-scale",
+                        "backgroundColor": {
+                          "scale": {
+                            "type": "quantitative",
+                            "colorRamp": {
+                              "mode": "scheme",
+                              "scheme": "greenblue"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "fieldName": "avg(Host Rating)",
+                      "cellType": "text",
+                      "style": {
+                        "type": "color-scale",
+                        "backgroundColor": {
+                          "scale": {
+                            "type": "quantitative",
+                            "colorRamp": {
+                              "mode": "scheme",
+                              "scheme": "greenblue"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 6,
+            "width": 9,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "1655ee06",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "wanderbricks_bookings",
+                  "fields": [
+                    {
+                      "name": "Booking Created At",
+                      "expression": "`Booking Created At`"
+                    },
+                    {
+                      "name": "Property Title",
+                      "expression": "`Property Title`"
+                    },
+                    {
+                      "name": "Property Type",
+                      "expression": "`Property Type`"
+                    },
+                    {
+                      "name": "Destination",
+                      "expression": "`Destination`"
+                    },
+                    {
+                      "name": "Booking Status",
+                      "expression": "`Booking Status`"
+                    },
+                    {
+                      "name": "Host Rating",
+                      "expression": "`Host Rating`"
+                    },
+                    {
+                      "name": "Bedrooms",
+                      "expression": "`Bedrooms`"
+                    },
+                    {
+                      "name": "Country",
+                      "expression": "`Country`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "Booking Created At"
+                  },
+                  {
+                    "fieldName": "Property Title"
+                  },
+                  {
+                    "fieldName": "Property Type"
+                  },
+                  {
+                    "fieldName": "Destination"
+                  },
+                  {
+                    "fieldName": "Booking Status"
+                  },
+                  {
+                    "fieldName": "Host Rating",
+                    "style": {
+                      "type": "basic",
+                      "rules": [
+                        {
+                          "condition": {
+                            "operand": {
+                              "type": "data-value",
+                              "value": "4"
+                            },
+                            "operator": ">="
+                          },
+                          "foregroundColor": {
+                            "themeColorType": "visualizationColors",
+                            "position": 3
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "fieldName": "Bedrooms"
+                  },
+                  {
+                    "fieldName": "Country"
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 0,
+            "width": 9,
+            "height": 6
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "canvasBackgroundColor": {
+        "light": "#EBEBEB",
+        "dark": "#1E343F"
+      },
+      "widgetBackgroundColor": {
+        "light": "#FCFCFD",
+        "dark": "#08141A"
+      },
+      "widgetBorderColor": {
+        "dark": "#08141A"
+      },
+      "fontColor": {
+        "light": "#08141A",
+        "dark": "#EBEBEB"
+      },
+      "selectionColor": {
+        "light": "#D3456B",
+        "dark": "#D3456B"
+      },
+      "visualizationColors": [
+        "#15AFDD",
+        "#2375A8",
+        "#52A870",
+        "#C85070",
+        "#C89930"
+      ],
+      "widgetHeaderAlignment": "LEFT",
+      "fontFamily": "Space Grotesk",
+      "widgetCornerRadius": 12,
+      "fontSettings": {
+        "base": {
+          "fontFamily": "Space Grotesk",
+          "fontColor": {
+            "light": "#08141A",
+            "dark": "#EBEBEB"
+          }
+        }
+      }
+    },
+    "applyModeEnabled": false
+  }
+}
