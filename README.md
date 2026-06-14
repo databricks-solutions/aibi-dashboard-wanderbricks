@@ -1,6 +1,6 @@
 # Wanderbricks AI/BI Dashboard
 
-A sample [Databricks AI/BI Dashboard](https://docs.databricks.com/en/dashboards/index.html) built as a companion to [this blog post](<insert link once posted>) on making dashboards beautiful.
+This is the dashboard we walk through in [Design Beautiful Dashboards in AI/BI](<insert link once posted>). It's built on `samples.wanderbricks`, a fictional travel and hospitality dataset available in every Databricks workspace — just import it and follow along.
 
 ## Installation
 
