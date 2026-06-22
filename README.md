@@ -2,7 +2,7 @@
 <img width="1200" height="628" alt="blog-design-beautiful-dashboards-in-aibi" src="https://github.com/user-attachments/assets/b5673b2b-5f33-47f0-9b96-53a85092bb0b" />
 
 
-This is the dashboard we walk through in [Design Beautiful Dashboards in AI/BI](https://www.databricks.com/blog/design-beautiful-dashboards-aibi). It is built on `samples.wanderbricks`, a fictional travel and hospitality dataset available in every Databricks workspace. Just import it and follow along.
+This is the dashboard we walk through in [Design Beautiful Dashboards in AI/BI](https://www.databricks.com/blog/design-beautiful-dashboards-aibi) blog. It is built on `samples.wanderbricks`, a fictional travel and hospitality dataset available in every Databricks workspace. Just import it and follow along.
 
 ## Installation
 
